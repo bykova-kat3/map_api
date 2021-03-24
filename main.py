@@ -4,7 +4,6 @@ import sys
 import requests
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
-from PIL import Image
 
 SCREEN_SIZE = [600, 450]
 
@@ -12,13 +11,11 @@ SCREEN_SIZE = [600, 450]
 class Example(QWidget):
     def __init__(self, req):
         super().__init__()
-        print(type(self.resp(req)))
         self.getImage(self.resp(req))
         self.initUI()
 
     def getImage(self, apiinf):
         response = requests.get(apiinf[0], params=apiinf[1])
-
         self.map_file = "map.png"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
@@ -26,8 +23,7 @@ class Example(QWidget):
     def initUI(self):
         self.setGeometry(100, 100, *SCREEN_SIZE)
         self.setWindowTitle('Отображение карты')
-
-        ## Изображение
+        # Изображение
         self.pixmap = QPixmap(self.map_file)
         self.image = QLabel(self)
         self.image.move(0, 0)
@@ -63,7 +59,7 @@ class Example(QWidget):
         map_params = {
             "ll": ",".join([toponym_longitude, toponym_lattitude]),
             "spn": ",".join([str(float(toponym_uc.split()[0]) - float(toponym_lc.split()[0])),
-                     str(float(toponym_uc.split()[1]) - float(toponym_lc.split()[1]))]),
+                             str(float(toponym_uc.split()[1]) - float(toponym_lc.split()[1]))]),
             "l": "map"
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
@@ -72,6 +68,6 @@ class Example(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = Example(input())
+    ex = Example(input('Введите адрес '))
     ex.show()
     sys.exit(app.exec())
