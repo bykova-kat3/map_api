@@ -3,7 +3,7 @@ import sys
 
 import requests
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton
 from qtpy import QtCore
 
 SCREEN_SIZE = [600, 450]
@@ -14,6 +14,8 @@ class Example(QWidget):
         super().__init__()
         self.spn1 = 0
         self.spn2 = 0
+        self.l = 'map'
+        self.s = 0
         self.address = req
         self.getImage(self.response(req))
         self.initUI()
@@ -21,12 +23,15 @@ class Example(QWidget):
     def initUI(self):
         self.setGeometry(100, 100, *SCREEN_SIZE)
         self.setWindowTitle('Отображение карты')
-
         self.pixmap = QPixmap(self.getImage(self.response(self.address)))
         self.image = QLabel(self)
         self.image.move(0, 0)
         self.image.resize(600, 450)
         self.image.setPixmap(self.pixmap)
+        self.btn = QPushButton(self.l, self)
+        self.btn.resize(100, 50)
+        self.btn.move(500, 400)
+        self.btn.clicked.connect(self.layer)
 
     def getImage(self, apiinf):
         response = requests.get(apiinf[0], params=apiinf[1])
@@ -36,7 +41,6 @@ class Example(QWidget):
         return map_file
 
     def keyPressEvent(self, event):
-        fl = 0
         if event.key() == QtCore.Qt.Key_Up:
             self.spn2 += float(self.spn()[1])
 
@@ -49,13 +53,6 @@ class Example(QWidget):
         if event.key() == QtCore.Qt.Key_Left:
             self.spn1 += (float(self.spn()[0]) * (-1))
 
-        '''if self.z < 0:
-            self.z = 0
-        elif self.z > 17:
-            self.z = 17
-        else:
-            fl = 1
-        if fl:'''
         self.image.setPixmap(QPixmap(self.getImage(self.response(self.address))))
 
     def closeEvent(self, event):
@@ -86,7 +83,7 @@ class Example(QWidget):
         map_params = {
             "ll": ",".join([str(float(toponym_longitude) + self.spn1), str(float(toponym_lattitude) + self.spn2)]),
             "spn": ",".join(self.spn()),
-            "l": "map"
+            "l": self.l
         }
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         return map_api_server, map_params
@@ -95,6 +92,13 @@ class Example(QWidget):
         return [str(float(self.toponym_uc.split()[0]) - float(self.toponym_lc.split()[0])), str(
             float(self.toponym_uc.split()[1]) - float(self.toponym_lc.split()[1]))]
 
+    def layer(self):
+        self.s += 1
+        if self.s > 2:
+            self.s = 0
+        self.l = ["map", "sat", "sat,skl"][self.s]
+        self.btn.setText(self.l)
+        self.image.setPixmap(QPixmap(self.getImage(self.response(self.address))))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
