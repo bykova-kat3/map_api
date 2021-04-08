@@ -2,12 +2,9 @@ import os
 import sys
 import requests
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow
 from qtpy import QtCore
 from design import Ui_MainWindow
-
-
-# SCREEN_SIZE = [800, 450]
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -39,10 +36,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def keyPressEvent(self, event):
         fl = 0
-        if event.key() == QtCore.Qt.Key_1:
+        if event.key() == QtCore.Qt.Key_PageUp:
             self.z += 1
             fl = 1
-        if event.key() == QtCore.Qt.Key_2:
+        if event.key() == QtCore.Qt.Key_PageDown:
             self.z -= 1
             fl = 1
         if self.z < 0:
@@ -96,6 +93,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MainWindow(input('Введите адрес '))
+    ex = MainWindow('Москва')
     ex.show()
     sys.exit(app.exec())
