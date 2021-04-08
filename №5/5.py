@@ -76,6 +76,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             map_params = {
                 "ll": ",".join([toponym_longitude, toponym_lattitude]),
                 "l": "map",
+                "pt": f'{toponym_longitude},{toponym_lattitude},pm2bll',
                 "spn": ",".join([str(float(toponym_uc.split()[0]) - float(toponym_lc.split()[0])),
                                  str(float(toponym_uc.split()[1]) - float(toponym_lc.split()[1]))]),
             }
